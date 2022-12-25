@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 import bcrypt
 from sqlalchemy.orm import Session
@@ -33,3 +33,17 @@ def create_user(db: Session, user: schemas.UserCreate) -> Optional[models.User]:
 
     db.refresh(db_user)
     return db_user
+
+
+def add_weight_event_to_user(
+    db: Session, user: models.User, weight_event: schemas.WeightCreate
+) -> models.Weight:
+    db_weight = models.Weight(**weight_event.dict(), user=user)
+    db.add(db_weight)
+    db.commit()
+    db.refresh(db_weight)
+    return db_weight
+
+
+def get_weights_for_user(db: Session, user: models.User) -> List[models.Weight]:
+    return user.weights

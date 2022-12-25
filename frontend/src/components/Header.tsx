@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../contexts/Auth";
 
 function Header(): JSX.Element {
-  const { logout, user, isLoggedIn } = useContext(AuthContext);
+  const { logout, email, isLoggedIn } = useContext(AuthContext);
 
   let actionButtons = null;
   if (isLoggedIn) {
     actionButtons = (
       <div className="buttons">
-        <p>Welcome {user}</p>
+        <p>Welcome {email}</p>
         <Link
           style={{ marginLeft: "10px" }}
           className="button is-primary"
@@ -39,27 +39,29 @@ function Header(): JSX.Element {
   return (
     <div className="block">
       <nav className="navbar" role="navigation" aria-label="main navigation">
-        <div id="navbarBasicExample" className="navbar-menu">
-          <div className="navbar-start">
-            <Link className="navbar-item" to="/">
-              Home
-            </Link>
-            <Link className="navbar-item" to="/weight">
-              Weight
-            </Link>
-            <Link className="navbar-item" to="/exercise">
-              Exercise
-            </Link>
-            <Link className="navbar-item" to="/diet">
-              Diet
-            </Link>
-            <Link className="navbar-item" to="/about">
-              About
-            </Link>
-          </div>
+        <div className="container">
+          <div id="navbarBasicExample" className="navbar-menu">
+            <div className="navbar-start">
+              <Link className="navbar-item" to="/">
+                Home
+              </Link>
+              <Link className="navbar-item" to="/weight">
+                Weight
+              </Link>
+              <Link className="navbar-item" to="/exercise">
+                Exercise
+              </Link>
+              <Link className="navbar-item" to="/diet">
+                Diet
+              </Link>
+              <Link className="navbar-item" to="/about">
+                About
+              </Link>
+            </div>
 
-          <div className="navbar-end">
-            <div className="navbar-item">{actionButtons}</div>
+            <div className="navbar-end">
+              <div className="navbar-item">{actionButtons}</div>
+            </div>
           </div>
         </div>
       </nav>

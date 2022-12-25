@@ -2,7 +2,8 @@ import React, { PropsWithChildren, useState } from "react";
 import UserService from "../services/User";
 
 interface IAuthContext {
-  user: string;
+  email: string;
+  userId: string;
   authPending: boolean;
   isLoggedIn: boolean;
   authError: null | string;
@@ -16,8 +17,9 @@ export const AuthContext = React.createContext<IAuthContext>(
 );
 
 export const ContextProvider = (props: PropsWithChildren<{}>) => {
-  const [user, setUser] = useState(getUserFromStorage());
-  const [isLoggedIn, setisLoggedIn] = useState(user ? true : false);
+  const [email, setEmail] = useState(getEmailFromStorage());
+  const [userId, setUserId] = useState(getUserIdFromStorage());
+  const [isLoggedIn, setisLoggedIn] = useState(email ? true : false);
   const [authPending, setauthPending] = useState(false);
   const [authError, setauthError] = useState<null | string>(null);
 
@@ -31,8 +33,9 @@ export const ContextProvider = (props: PropsWithChildren<{}>) => {
       const resp = await UserService.signUp(email, password);
       if (resp.error === false) {
         setisLoggedIn(true);
-        setUser(email);
-        saveUsertoStorage(email);
+        setEmail(email);
+        setUserId(resp.data.id);
+        saveEmailtoStorage(email);
       } else {
         setisLoggedIn(false);
         setauthError(resp.data);
@@ -52,8 +55,10 @@ export const ContextProvider = (props: PropsWithChildren<{}>) => {
       const resp = await UserService.login(email, password);
       if (resp.error === false) {
         setisLoggedIn(true);
-        setUser(email);
-        saveUsertoStorage(email);
+        setEmail(email);
+        setUserId(resp.data.id);
+        saveEmailtoStorage(email);
+        saveUserIdtoStorage(resp.data.id);
       } else {
         setisLoggedIn(false);
         setauthError(resp.data);
@@ -64,17 +69,20 @@ export const ContextProvider = (props: PropsWithChildren<{}>) => {
   };
 
   const logout = () => {
-    setUser("");
+    setEmail("");
+    setUserId("");
     setauthPending(false);
     setisLoggedIn(false);
     setauthError(null);
-    deleteUserFromStorage();
+    deleteEmailFromStorage();
+    deleteUserIdFromStorage();
   };
 
   return (
     <AuthContext.Provider
       value={{
-        user,
+        email,
+        userId,
         authError,
         authPending,
         isLoggedIn,
@@ -87,15 +95,28 @@ export const ContextProvider = (props: PropsWithChildren<{}>) => {
   );
 };
 
-function deleteUserFromStorage(): void {
-  window.localStorage.removeItem("user");
+function deleteEmailFromStorage(): void {
+  window.localStorage.removeItem("email");
 }
 
-function saveUsertoStorage(email: string): void {
-  window.localStorage.setItem("user", email);
+function saveEmailtoStorage(email: string): void {
+  window.localStorage.setItem("email", email);
 }
 
-function getUserFromStorage(): string {
-  const user = window.localStorage.getItem("user");
+function getEmailFromStorage(): string {
+  const user = window.localStorage.getItem("email");
   return user || "";
+}
+
+function getUserIdFromStorage(): string {
+  const user = window.localStorage.getItem("userId");
+  return user || "";
+}
+
+function saveUserIdtoStorage(userId: string): void {
+  window.localStorage.setItem("userId", userId);
+}
+
+function deleteUserIdFromStorage(): void {
+  window.localStorage.removeItem("userId");
 }
