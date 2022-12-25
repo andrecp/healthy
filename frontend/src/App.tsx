@@ -5,6 +5,7 @@ import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Layout from "./pages/Layout";
 import Weight from "./components/Weight";
 import AuthRequired from "./components/AuthRequired";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             }
           />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
