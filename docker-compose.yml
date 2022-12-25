@@ -1,0 +1,35 @@
+services:
+  backend:
+    image: backend
+    build: backend/
+    ports:
+      - "80:80"
+    networks:
+      - backend
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: example
+      DB_NAME: postgres
+    volumes:
+      - "./backend/webapp:/code/webapp"
+      - "./backend/alembic:/code/alembic"
+
+  postgres:
+    image: postgres:15
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - backend
+    environment:
+      POSTGRES_PASSWORD: example
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  backend: {}
