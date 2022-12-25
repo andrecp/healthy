@@ -1,11 +1,16 @@
 import { useContext, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { AuthContext } from "../contexts/Auth";
 import ErrorNotication from "./ErrorNotification";
 
 function Login(): JSX.Element {
-  const { login, authError } = useContext(AuthContext);
+  const { login, authError, isLoggedIn } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  if (isLoggedIn) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <div className="box">

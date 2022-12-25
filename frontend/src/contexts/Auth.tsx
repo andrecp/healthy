@@ -16,8 +16,8 @@ export const AuthContext = React.createContext<IAuthContext>(
 );
 
 export const ContextProvider = (props: PropsWithChildren<{}>) => {
-  const [user, setUser] = useState("");
-  const [isLoggedIn, setisLoggedIn] = useState(false);
+  const [user, setUser] = useState(getUserFromStorage());
+  const [isLoggedIn, setisLoggedIn] = useState(user ? true : false);
   const [authPending, setauthPending] = useState(false);
   const [authError, setauthError] = useState<null | string>(null);
 
@@ -31,10 +31,10 @@ export const ContextProvider = (props: PropsWithChildren<{}>) => {
       const resp = await UserService.signUp(email, password);
       if (resp.error === false) {
         setisLoggedIn(true);
-        setUser(user);
+        setUser(email);
+        saveUsertoStorage(email);
       } else {
         setisLoggedIn(false);
-        console.log(resp);
         setauthError(resp.data);
       }
     } catch (err) {
@@ -52,10 +52,10 @@ export const ContextProvider = (props: PropsWithChildren<{}>) => {
       const resp = await UserService.login(email, password);
       if (resp.error === false) {
         setisLoggedIn(true);
-        setUser(user);
+        setUser(email);
+        saveUsertoStorage(email);
       } else {
         setisLoggedIn(false);
-        console.log(resp);
         setauthError(resp.data);
       }
     } catch (err) {
@@ -68,6 +68,7 @@ export const ContextProvider = (props: PropsWithChildren<{}>) => {
     setauthPending(false);
     setisLoggedIn(false);
     setauthError(null);
+    deleteUserFromStorage();
   };
 
   return (
@@ -85,3 +86,16 @@ export const ContextProvider = (props: PropsWithChildren<{}>) => {
     />
   );
 };
+
+function deleteUserFromStorage(): void {
+  window.localStorage.removeItem("user");
+}
+
+function saveUsertoStorage(email: string): void {
+  window.localStorage.setItem("user", email);
+}
+
+function getUserFromStorage(): string {
+  const user = window.localStorage.getItem("user");
+  return user || "";
+}

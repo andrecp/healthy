@@ -1,6 +1,41 @@
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../contexts/Auth";
 
 function Header(): JSX.Element {
+  const { logout, user, isLoggedIn } = useContext(AuthContext);
+
+  let actionButtons = null;
+  if (isLoggedIn) {
+    actionButtons = (
+      <div className="buttons">
+        <p>Welcome {user}</p>
+        <Link
+          style={{ marginLeft: "10px" }}
+          className="button is-primary"
+          to="/signup"
+          onClick={(e) => {
+            e.preventDefault();
+            logout();
+          }}
+        >
+          <strong>Logout</strong>
+        </Link>
+      </div>
+    );
+  } else {
+    actionButtons = (
+      <div className="buttons">
+        <Link className="button is-primary" to="/signup">
+          <strong>Sign up</strong>
+        </Link>
+        <Link className="button is-light" to="/login">
+          Log in
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="block">
       <nav className="navbar" role="navigation" aria-label="main navigation">
@@ -24,16 +59,7 @@ function Header(): JSX.Element {
           </div>
 
           <div className="navbar-end">
-            <div className="navbar-item">
-              <div className="buttons">
-                <Link className="button is-primary" to="/signup">
-                  <strong>Sign up</strong>
-                </Link>
-                <Link className="button is-light" to="/login">
-                  Log in
-                </Link>
-              </div>
-            </div>
+            <div className="navbar-item">{actionButtons}</div>
           </div>
         </div>
       </nav>
