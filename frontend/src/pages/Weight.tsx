@@ -9,6 +9,8 @@ import WeightTable from "../components/WeightTable";
 function Weight() {
   const [weights, setWeights] = useState<IWeight[]>([]);
   const [weight, setWeight] = useState("");
+  const [firstLoad, setfirstLoad] = useState(true);
+  const [refreshWeight, setrefreshWeight] = useState(false);
   const [when, setWhen] = useState(new Date().toLocaleDateString("en-CA"));
   const { userId } = useContext(AuthContext);
 
@@ -16,16 +18,21 @@ function Weight() {
     const fetchData = async () => {
       const response = await WeightService.getWeights();
       setWeights(response.weights || []);
+      setrefreshWeight(false);
+      setfirstLoad(false);
     };
 
-    fetchData().catch(console.error);
-  }, [userId]);
+    if (firstLoad || refreshWeight) {
+      fetchData().catch(console.error);
+    }
+  }, [userId, refreshWeight, firstLoad]);
 
   useEffect(() => {
     const keyEnter = (event: any) => {
       if (event.key === "Enter") {
         event.preventDefault();
         WeightService.addWeight(weight, when);
+        setrefreshWeight(true);
       }
     };
     document.addEventListener("keydown", keyEnter);
@@ -49,7 +56,10 @@ function Weight() {
                     className="input"
                     type="text"
                     value={weight}
-                    onChange={(e) => setWeight(e.target.value)}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      setWeight(e.target.value);
+                    }}
                     placeholder="Enter your weight"
                   />
                 </p>
@@ -63,7 +73,10 @@ function Weight() {
                     className="input"
                     type="date"
                     value={when}
-                    onChange={(e) => setWhen(e.target.value)}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      setWhen(e.target.value);
+                    }}
                     placeholder="When did you weight yourself? Leave empty for now"
                   />
                 </p>
@@ -75,6 +88,7 @@ function Weight() {
                     onClick={(e) => {
                       e.preventDefault();
                       WeightService.addWeight(weight, when);
+                      setrefreshWeight(true);
                     }}
                   >
                     Add weight

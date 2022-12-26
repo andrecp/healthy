@@ -1,5 +1,5 @@
 import { Chart, registerables } from "chart.js";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { IWeight } from "../services/Utils";
 
 Chart.register(...registerables);
@@ -9,13 +9,14 @@ interface IWeightChart {
 }
 
 function WeightChart(props: IWeightChart): JSX.Element {
-  const { weights } = props;
-  const labels = weights.map(({ date_time }) => date_time).reverse();
-  const dataset = weights.map(({ weight_kg }) => weight_kg).reverse();
+  const [weights, setWeight] = useState<IWeight[]>([]);
 
   const chartCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
+    setWeight(props.weights);
+    const labels = weights.map(({ date_time }) => date_time).reverse();
+    const dataset = weights.map(({ weight_kg }) => weight_kg).reverse();
     const chartCanvas = chartCanvasRef.current;
     if (!chartCanvas) return;
 
@@ -42,7 +43,7 @@ function WeightChart(props: IWeightChart): JSX.Element {
     return () => {
       chartInstance.destroy();
     };
-  }, []);
+  }, [props.weights, weights]);
 
   return (
     <div>

@@ -6,10 +6,12 @@ interface IWeightTable {
 }
 
 function WeightTable(props: IWeightTable): JSX.Element {
-  const { weights } = props;
+  const [weights, setWeight] = useState<IWeight[]>([]);
   const [rows, setRows] = useState<React.ReactNode>([]);
 
   useEffect(() => {
+    setWeight(props.weights);
+
     if (weights.length > 0) {
       const _rows = weights.map((singleWeight) => {
         return (
@@ -21,7 +23,7 @@ function WeightTable(props: IWeightTable): JSX.Element {
       });
       setRows(_rows);
     }
-  }, [weights]);
+  }, [props.weights, weights]);
 
   return (
     <table className="table">
