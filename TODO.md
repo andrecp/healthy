@@ -1,4 +1,5 @@
 - Form validation https://learnetto.com/blog/react-form-validation
 - Form layout in general
+- Move docker from uvicorn dev mode to proper gunicron
 - Use tailscale
 - Automate the devops set up, right now manually spinned up something on Linode & installed NGINX, Docker, copied docker compose file
