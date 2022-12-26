@@ -1,4 +1,4 @@
 - Form validation https://learnetto.com/blog/react-form-validation
 - Form layout in general
-- Add Graph for weight
-- Deploy somehwere, use tailscale
+- Use tailscale
+- Automate the devops set up, right now manually spinned up something on Linode & installed NGINX, Docker, copied docker compose file

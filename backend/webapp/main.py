@@ -11,5 +11,5 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(users.router, prefix="/v1/users", tags=["users"])
-app.include_router(weights.router, prefix="/v1/weights", tags=["weights"])
+app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
+app.include_router(weights.router, prefix="/api/v1/weights", tags=["weights"])

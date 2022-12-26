@@ -2,7 +2,7 @@ import axios from "axios";
 
 import type { IAuthResponse } from "./Utils";
 
-const baseURL = "http://localhost/v1/users";
+const baseURL = "http://localhost/api/v1/users";
 
 async function doAuth(
   method: string,

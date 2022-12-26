@@ -107,8 +107,6 @@ export const ContextProvider = (props: PropsWithChildren<{}>) => {
       if (resp.error === false && resp.access_token && resp.refresh_token) {
         setisLoggedIn(true);
         const jwtRaw = JSON.parse(parseJwt(resp.access_token).sub);
-        console.log(jwtRaw);
-        console.log(resp);
         setEmail(jwtRaw.email);
         setUserId(jwtRaw.id);
         setjwtAccess(resp.access_token);

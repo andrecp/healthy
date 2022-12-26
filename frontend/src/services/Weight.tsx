@@ -2,7 +2,7 @@ import axios from "axios";
 
 import type { IWeightResponse, IWeightsResponse } from "./Utils";
 
-const baseURL = "http://localhost/v1/weights";
+const baseURL = "http://localhost/api/v1/weights";
 
 const WeightService = {
   addWeight: async function (
@@ -10,7 +10,7 @@ const WeightService = {
     date: string
   ): Promise<IWeightResponse> {
     try {
-      await axios.post(`${baseURL}/weights`, {
+      await axios.post(`${baseURL}`, {
         weight_kg: weight,
         date_time: date,
       });
@@ -36,7 +36,7 @@ const WeightService = {
   },
   getWeights: async function (): Promise<IWeightsResponse> {
     try {
-      const rawResponse = await axios.get(`${baseURL}/weights`);
+      const rawResponse = await axios.get(`${baseURL}`);
       const response: IWeightsResponse = {
         weights: rawResponse.data.weights,
         error: false,

@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-@router.post("/weights", response_model=Weight)
+@router.post("/", response_model=Weight)
 async def add_weight(
     payload: WeightCreate,
     db: Session = Depends(get_db),
@@ -24,7 +24,7 @@ async def add_weight(
     return db_weight
 
 
-@router.get("/weights", response_model=Weights)
+@router.get("/", response_model=Weights)
 async def get_weights(db: Session = Depends(get_db), user=Depends(get_current_user)):
     weights = get_weights_for_user(db, user)
     return {"weights": weights}
