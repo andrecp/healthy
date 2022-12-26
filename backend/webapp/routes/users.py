@@ -55,5 +55,7 @@ async def login(payload: UserCreate, db: Session = Depends(get_db)):
 def refresh(user=Depends(get_user_from_refresh_token)):
     return {
         "refresh_token": "",
-        "access_token": create_access_token({"email": user.email, "id": user.id}),
+        "access_token": create_access_token(
+            json.dumps({"email": user.email, "id": user.id})
+        ),
     }
