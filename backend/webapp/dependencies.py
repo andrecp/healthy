@@ -4,7 +4,7 @@ from datetime import datetime
 from .database import SessionLocal
 from . import config
 from .repo import get_user
-from jose import jwt
+from jose import jwt, ExpiredSignatureError
 from fastapi import Header, HTTPException, Depends
 
 logger = logging.getLogger(__name__)
@@ -29,22 +29,14 @@ def get_current_user(authorization: str = Header(), db=Depends(get_db)):
         payload = jwt.decode(
             token, config.JWT_SECRET_KEY, algorithms=[config.ALGORITHM]
         )
-        expire_date = payload.get("exp")
-        if datetime.fromtimestamp(expire_date) < datetime.utcnow():
-            raise HTTPException(
-                status_code=406,
-                detail="Token expired",
-                headers={"Authorization": "Bearer"},
-            )
-
         sub = json.loads(payload.get("sub"))
         user = get_user(db, sub.get("id"))
-        if user is None:
-            raise HTTPException(
-                status_code=401,
-                detail="Invaid user",
-                headers={"Authorization": "Bearer"},
-            )
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=406,
+            detail="Token expired",
+            headers={"Authorization": "Bearer"},
+        )
     except Exception:
         logger.exception("What happened")
         raise HTTPException(
@@ -52,6 +44,13 @@ def get_current_user(authorization: str = Header(), db=Depends(get_db)):
             detail="Problem with JWT token",
             headers={"Authorization": "Bearer"},
         )
+    if user is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Invaid user",
+            headers={"Authorization": "Bearer"},
+        )
+
     return user
 
 
@@ -66,22 +65,14 @@ def get_user_from_refresh_token(authorization: str = Header(), db=Depends(get_db
         payload = jwt.decode(
             token, config.JWT_REFRESH_SECRET_KEY, algorithms=[config.ALGORITHM]
         )
-        expire_date = payload.get("exp")
-        if datetime.fromtimestamp(expire_date) < datetime.utcnow():
-            raise HTTPException(
-                status_code=406,
-                detail="Token expired",
-                headers={"Authorization": "Bearer"},
-            )
-
         sub = json.loads(payload.get("sub"))
         user = get_user(db, sub.get("id"))
-        if user is None:
-            raise HTTPException(
-                status_code=401,
-                detail="Invaid user",
-                headers={"Authorization": "Bearer"},
-            )
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=406,
+            detail="Token expired",
+            headers={"Authorization": "Bearer"},
+        )
     except Exception:
         logger.exception("What happened")
         raise HTTPException(
@@ -89,4 +80,11 @@ def get_user_from_refresh_token(authorization: str = Header(), db=Depends(get_db
             detail="Problem with JWT token",
             headers={"Authorization": "Bearer"},
         )
+    if user is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Invaid user",
+            headers={"Authorization": "Bearer"},
+        )
+
     return user

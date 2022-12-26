@@ -1,6 +1,6 @@
 services:
   backend:
-    image: backend
+    image: boredathome89/healthy:latest
     build: backend/
     ports:
       - "80:80"

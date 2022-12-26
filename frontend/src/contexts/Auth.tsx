@@ -48,6 +48,9 @@ export const ContextProvider = (props: PropsWithChildren<{}>) => {
       async function (error) {
         const originalRequest = error.config;
         if (error.response.status === 406 && !originalRequest._retry) {
+          console.log("Got a 406, retrying...");
+          console.log(originalRequest);
+          console.log(`current access ${jwtAccess}`);
           originalRequest._retry = true;
           const resp = await UserService.refreshAccessToken(jwtRefresh);
           const access_token = resp.access_token;
@@ -55,6 +58,8 @@ export const ContextProvider = (props: PropsWithChildren<{}>) => {
             "Bearer " + access_token;
           setjwtAccess(access_token || "");
           window.localStorage.setItem("jwtAccess", access_token || "");
+          console.log(`new access ${access_token}`);
+          console.log(originalRequest);
           return axios(originalRequest);
         }
         return Promise.reject(error);

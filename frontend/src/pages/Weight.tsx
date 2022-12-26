@@ -3,12 +3,13 @@ import { AuthContext } from "../contexts/Auth";
 import WeightService from "../services/Weight";
 
 import type { IWeight } from "../services/Utils";
+import WeightChart from "../components/WeightChart";
+import WeightTable from "../components/WeightTable";
 
 function Weight() {
   const [weights, setWeights] = useState<IWeight[]>([]);
   const [weight, setWeight] = useState("");
   const [when, setWhen] = useState(new Date().toLocaleDateString("en-CA"));
-  const [rows, setRows] = useState<React.ReactNode>([]);
   const { userId } = useContext(AuthContext);
 
   useEffect(() => {
@@ -32,20 +33,6 @@ function Weight() {
       document.removeEventListener("keydown", keyEnter);
     };
   }, [userId, weight, when]);
-
-  useEffect(() => {
-    if (weights.length > 0) {
-      const _rows = weights.map((singleWeight) => {
-        return (
-          <tr key={singleWeight.date_time}>
-            <td>{singleWeight.date_time}</td>
-            <td>{singleWeight.weight_kg}</td>
-          </tr>
-        );
-      });
-      setRows(_rows);
-    }
-  }, [weights]);
 
   return (
     <div className="section">
@@ -100,15 +87,14 @@ function Weight() {
 
         <div className="box">
           {(weights.length > 0 && (
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Weight</th>
-                </tr>
-              </thead>
-              <tbody>{rows}</tbody>
-            </table>
+            <div className="columns">
+              <div className="column">
+                <WeightChart weights={weights} />
+              </div>
+              <div className="column">
+                <WeightTable weights={weights} />
+              </div>
+            </div>
           )) || <p>No history to visualize</p>}
         </div>
       </div>
