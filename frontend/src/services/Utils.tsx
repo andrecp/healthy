@@ -1,3 +1,5 @@
+export const domain = process.env.REACT_APP_API_URI || "http://localhost";
+
 export interface IAuthResponse {
   text?: string;
   error: boolean;

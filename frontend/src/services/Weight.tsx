@@ -1,8 +1,8 @@
 import axios from "axios";
 
-import type { IWeightResponse, IWeightsResponse } from "./Utils";
+import { domain, IWeightResponse, IWeightsResponse } from "./Utils";
 
-const baseURL = "http://localhost/api/v1/weights";
+const baseURL = domain + "/api/v1/weights/";
 
 const WeightService = {
   addWeight: async function (
