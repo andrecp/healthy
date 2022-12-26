@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/Auth";
-import UserService from "../services/User";
+import WeightService from "../services/Weight";
 
 import type { IWeight } from "../services/Utils";
 
@@ -13,8 +13,8 @@ function Weight() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await UserService.getWeights(userId);
-      setWeights(response.data);
+      const response = await WeightService.getWeights();
+      setWeights(response.weights || []);
     };
 
     fetchData().catch(console.error);
@@ -24,7 +24,7 @@ function Weight() {
     const keyEnter = (event: any) => {
       if (event.key === "Enter") {
         event.preventDefault();
-        UserService.addWeight(userId, weight, when);
+        WeightService.addWeight(weight, when);
       }
     };
     document.addEventListener("keydown", keyEnter);
@@ -87,7 +87,7 @@ function Weight() {
                     className="button is-link is-pulled-right"
                     onClick={(e) => {
                       e.preventDefault();
-                      UserService.addWeight(userId, weight, when);
+                      WeightService.addWeight(weight, when);
                     }}
                   >
                     Add weight

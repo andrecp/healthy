@@ -3,6 +3,11 @@ from typing import List
 from pydantic import BaseModel
 
 
+class AuthToken(BaseModel):
+    access_token: str
+    refresh_token: str
+
+
 class WeightBase(BaseModel):
     weight_kg: float
     date_time: datetime.date

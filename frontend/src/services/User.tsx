@@ -1,118 +1,81 @@
 import axios from "axios";
 
-import type { IServiceResponse, IWeight } from "./Utils";
+import type { IAuthResponse } from "./Utils";
 
 const baseURL = "http://localhost/v1/users";
+
+async function doAuth(
+  method: string,
+  email: string,
+  password: string
+): Promise<IAuthResponse> {
+  try {
+    const rawResponse = await axios.post(`${baseURL}/${method}`, {
+      email,
+      password,
+    });
+    const response: IAuthResponse = {
+      access_token: rawResponse.data.access_token,
+      refresh_token: rawResponse.data.refresh_token,
+      error: false,
+    };
+    return response;
+  } catch (err) {
+    let errorResponse = { error: true } as IAuthResponse;
+    if (axios.isAxiosError(err)) {
+      if (!err?.response) {
+        errorResponse.text = "No Server Response";
+      } else if (err.response?.status === 400) {
+        errorResponse.text = err.response.data.detail;
+      } else {
+        errorResponse.text = "Signup failed";
+      }
+    }
+    return errorResponse;
+  }
+}
 
 const UserService = {
   signUp: async function (
     email: string,
     password: string
-  ): Promise<IServiceResponse> {
-    try {
-      const rawResponse = await axios.post(`${baseURL}/signup`, {
-        email,
-        password,
-      });
-      const response: IServiceResponse = {
-        data: rawResponse.data,
-        error: false,
-      };
-      return response;
-    } catch (err) {
-      let errorResponse = { error: true } as IServiceResponse;
-      if (axios.isAxiosError(err)) {
-        if (!err?.response) {
-          errorResponse.data = "No Server Response";
-        } else if (err.response?.status === 400) {
-          errorResponse.data = err.response.data.detail;
-        } else {
-          errorResponse.data = "Signup failed";
-        }
-      }
-      return errorResponse;
-    }
+  ): Promise<IAuthResponse> {
+    return await doAuth("signup", email, password);
   },
   login: async function (
     email: string,
     password: string
-  ): Promise<IServiceResponse> {
-    try {
-      const rawResponse = await axios.post(`${baseURL}/login`, {
-        email,
-        password,
-      });
-      const response: IServiceResponse = {
-        data: rawResponse.data,
-        error: false,
-      };
-      return response;
-    } catch (err) {
-      let errorResponse = { error: true } as IServiceResponse;
-      if (axios.isAxiosError(err)) {
-        if (!err?.response) {
-          errorResponse.data = "No Server Response";
-        } else if (err.response?.status === 400) {
-          errorResponse.data = err.response.data.detail;
-        } else if (err.response?.status === 404) {
-          errorResponse.data = "Invalid email or password";
-        } else {
-          errorResponse.data = "Login failed";
-        }
-      }
-      return errorResponse;
-    }
+  ): Promise<IAuthResponse> {
+    return await doAuth("login", email, password);
   },
-  addWeight: async function (
-    userId: string,
-    weight: string,
-    date: string
-  ): Promise<IServiceResponse> {
+  refreshAccessToken: async function (
+    access_token: string
+  ): Promise<IAuthResponse> {
     try {
-      const rawResponse = await axios.post(`${baseURL}/${userId}/weights`, {
-        weight_kg: weight,
-        date_time: date,
-      });
-      const response: IServiceResponse = {
-        data: rawResponse.data,
-        error: false,
-      };
-      return response;
-    } catch (err) {
-      let errorResponse = { error: true } as IServiceResponse;
-      if (axios.isAxiosError(err)) {
-        if (!err?.response) {
-          errorResponse.data = "No Server Response";
-        } else if (err.response?.status === 400) {
-          errorResponse.data = err.response.data.detail;
-        } else if (err.response?.status === 404) {
-          errorResponse.data = "Invalid email or password";
-        } else {
-          errorResponse.data = "Login failed";
+      const rawResponse = await axios.post(
+        `${baseURL}/refresh`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
         }
-      }
-      return errorResponse;
-    }
-  },
-  getWeights: async function (userId: string): Promise<IServiceResponse> {
-    try {
-      const rawResponse = await axios.get(`${baseURL}/${userId}/weights`);
-      const response: IServiceResponse = {
-        data: rawResponse.data.weights as IWeight[],
+      );
+      const response: IAuthResponse = {
+        access_token: rawResponse.data.access_token,
+        refresh_token: rawResponse.data.refresh_token,
         error: false,
       };
       return response;
     } catch (err) {
-      let errorResponse = { error: true } as IServiceResponse;
+      let errorResponse = { error: true } as IAuthResponse;
       if (axios.isAxiosError(err)) {
         if (!err?.response) {
-          errorResponse.data = "No Server Response";
+          errorResponse.text = "No Server Response";
         } else if (err.response?.status === 400) {
-          errorResponse.data = err.response.data.detail;
-        } else if (err.response?.status === 404) {
-          errorResponse.data = "Invalid email or password";
+          errorResponse.text = err.response.data.detail;
         } else {
-          errorResponse.data = "Login failed";
+          errorResponse.text = "Signup failed";
         }
       }
       return errorResponse;

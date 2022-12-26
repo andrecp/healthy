@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import users
+from .routes import users, weights
 
 
 app = FastAPI()
@@ -12,3 +12,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(users.router, prefix="/v1/users", tags=["users"])
+app.include_router(weights.router, prefix="/v1/weights", tags=["weights"])

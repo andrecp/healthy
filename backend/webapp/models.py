@@ -17,7 +17,12 @@ class User(Base):
     hashed_password = Column(String)
     is_active = Column(Boolean, default=True)
 
-    weights = relationship("Weight", back_populates="user", cascade="all, delete")
+    weights = relationship(
+        "Weight",
+        back_populates="user",
+        cascade="all, delete",
+        order_by="desc(Weight.date_time)",
+    )
 
     def check_password(self, password: str):
         return bcrypt.checkpw(
